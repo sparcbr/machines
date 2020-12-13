@@ -1,0 +1,12 @@
+
+
+
+
+	  local_id
+        cash
+       /     \
+      |      |
+machine <--> local
+id				id
+type			address
+key

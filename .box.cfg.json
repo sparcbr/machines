@@ -1,0 +1,21 @@
+{
+	"indent": {
+		"expandTab": 0,
+		"tabWidth": 2,
+		"indentWidth": 2
+	},
+	"sync": {
+		"exclude": [ ".gitignore" ]
+	},
+	"hooks": {
+		"android": {
+			"usb-device-connect": {
+				"cmd": ["app port"]
+			}
+		}
+	},
+	"cmd": {
+		"init": ["./status.sh"],
+		"start": "npm start"
+	}
+}

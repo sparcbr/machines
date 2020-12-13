@@ -1,0 +1,292 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`when <Button /> is mounted renders blue theme correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#05b0ff",
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`when <Button /> is mounted renders default theme correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#ffffff",
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`when <Button /> is mounted renders green theme correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <BVLinearGradient
+    colors={
+      Array [
+        4286430243,
+        4290445056,
+      ]
+    }
+    endPoint={
+      Object {
+        "x": 1,
+        "y": 0,
+      }
+    }
+    locations={null}
+    startPoint={
+      Object {
+        "x": 0,
+        "y": 0,
+      }
+    }
+    style={
+      Object {
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`when <Button /> is mounted renders label correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#ffffff",
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  >
+    <Text
+      adjustsFontSizeToFit={true}
+      ellipsizeMode="tail"
+      minimumFontScale={0.7}
+      numberOfLines={1}
+      style={
+        Array [
+          Object {
+            "color": "#000",
+            "fontFamily": "Catamaran-Bold",
+            "fontSize": 23,
+            "letterSpacing": 0.5,
+            "lineHeight": 39,
+            "textAlign": "center",
+            "textTransform": "uppercase",
+          },
+          undefined,
+        ]
+      }
+    >
+      My CTA
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`when <Button /> is mounted renders miniLightWhite theme correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "borderColor": "#ffffff",
+        "borderRadius": 20,
+        "borderWidth": 1,
+        "height": 30,
+        "justifyContent": "center",
+        "paddingLeft": 15,
+        "paddingRight": 15,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`when <Button /> is mounted renders no label button correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#ffffff",
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`when <Button /> is mounted renders yellow theme correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <BVLinearGradient
+    colors={
+      Array [
+        4294944768,
+        4294764288,
+      ]
+    }
+    endPoint={
+      Object {
+        "x": 1,
+        "y": 0,
+      }
+    }
+    locations={null}
+    startPoint={
+      Object {
+        "x": 0,
+        "y": 0,
+      }
+    }
+    style={
+      Object {
+        "borderRadius": 35,
+        "height": 55,
+        "justifyContent": "center",
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "textAlign": "center",
+      }
+    }
+  />
+</View>
+`;

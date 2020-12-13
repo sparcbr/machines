@@ -1,0 +1,30 @@
+Busca:
+	- por local: endereço, nome:
+	- coletas próximas
+
+Locais próximos:
+	- ordenar por última coleta, bairro, etc
+	- filtrar por última coleta há mais de X dias
+		Mercado chinelão - Camobi
+		Loja de chocolates - Shopping Sta Maria
+
+alocação máquina-local
+
+
+Locais:
+	- cadastrar novo: nome, endereço, fone
+		screen jump -> selecionar máquinas | adicionar novo
+	- listagem: alfabética, nome, etc
+		-
+
+Máquinas:
+	- cadastrar nova: tipo chave, status
+		screen jump -> selecionar local | adicionar nova
+	- listagem:
+		- status: inativas (desalocadas) | ativas
+
+Coleta
+
+Configurações:
+	- Meu local atual:
+		manual / automático
