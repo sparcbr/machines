@@ -1,4 +1,4 @@
-import { isEmpty, trim } from 'lodash'
+import { trim } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import {
 	Button,
@@ -11,17 +11,12 @@ import {
 } from 'react-native'
 import { styles } from '../assets/styles/Globals'
 import { DatasetService } from '../services/dataset'
-import { PlacesList } from './PlacesList'
 import { CollectsTable } from './CollectsTable'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { DateUtil } from '../shared/date'
 
 export const CollectReportScreen = ({ navigation }) => {
 	const datasetService = DatasetService.getInstance()
-	const [searchName, setSearchName] = useState('')
-	const [searchAddress, setSearchAddress] = useState('')
-	const [searchNameRef, setSearchNameRef] = useState(null)
-
 	const [date, setDate] = useState(DateUtil.monthsFromNow(3))
 	const [dateStr, setDateStr] = useState(
 		DateUtil.formatDate(DateUtil.monthsFromNow(3))
@@ -62,7 +57,6 @@ export const CollectReportScreen = ({ navigation }) => {
 		setShowDatePicker2(false)
 		if (DateUtil.isValidDate(currentDate)) {
 			setDateStr2(DateUtil.formatDate(currentDate))
-			searchNameRef && searchNameRef.focus()
 		}
 		setDate2(currentDate)
 	}
@@ -81,61 +75,17 @@ export const CollectReportScreen = ({ navigation }) => {
 		setDateStr2(text)
 	}
 
-	const [data, setData] = useState([])
-	const [selected, setSelected] = useState(null)
-
 	const [, updateState] = React.useState()
 	const forceUpdate = React.useCallback(() => updateState({}), [])
-	function updatePlaceData() {
-		if (!datasetService) return
-		if (isEmpty(searchName) && isEmpty(searchAddress)) {
-			setData(datasetService.getData())
-			setSelected(datasetService.getSelected())
-		} else {
-			setSelected(datasetService.getSelected())
-			setData(
-				datasetService.getData().filter(e => {
-					return (
-						(!isEmpty(searchName) &&
-							e.name.toLowerCase().indexOf(searchName.toLowerCase()) >= 0) ||
-						(!isEmpty(searchAddress) &&
-							e.address.toLowerCase().indexOf(searchAddress.toLowerCase()) >= 0)
-					)
-				})
-			)
-		}
-		forceUpdate()
-	}
-
-	function _setSearchName(text) {
-		setSearchName(text)
-		datasetService.setFilter(text, searchAddress)
-	}
-	function _setSearchAddress(text) {
-		setSearchAddress(text)
-		datasetService.setFilter(searchName, text)
-	}
-	useEffect(() => {
-		if (!datasetService) {
-			console.debug('datasetservice is null yet 1')
-			return
-		}
-		setSearchName(datasetService.getSearchNameFilter())
-		setSearchAddress(datasetService.getSearchAddressFilter())
-	}, [datasetService])
-
-	useEffect(() => {
-		if (!datasetService) {
-			console.debug('datasetservice is null yet')
-			return
-		}
-		updatePlaceData()
-	}, [searchName, searchAddress])
 
 	React.useEffect(() => {
 		const unsubscribe = navigation.addListener('focus', () => {
 			// The screen is focused
-			updatePlaceData()
+			if (!datasetService) {
+				console.debug('datasetservice is null yet 1')
+				return
+			}
+			updateCollectTable()
 		})
 
 		// Return the function to unsubscribe from the event so it gets removed on unmount
@@ -143,8 +93,12 @@ export const CollectReportScreen = ({ navigation }) => {
 	}, [navigation])
 
 	useEffect(() => {
+		if (!datasetService) {
+			console.debug('datasetservice is null yet 2')
+			return
+		}
 		updateCollectTable()
-	}, [selected, date, date2])
+	}, [datasetService, date, date2])
 
 	const [collectData, setCollectData] = useState({})
 
@@ -154,6 +108,21 @@ export const CollectReportScreen = ({ navigation }) => {
 		//if (isEmpty(date) || isEmpty(date2)) return
 		setCollectData(datasetService.getCollectData(date, date2))
 		forceUpdate()
+	}
+
+	function editCollect(placeId, monthIndex) {
+
+		let collect = datasetService.findCollect(placeId, monthIndex, collectData.monthRange)
+		// populate text fields in CollectScreen  
+		console.debug('collect here', collect)
+		if (collect) navigation.navigate('Coletar', {
+			date: collect.date.getTime(),
+			commission: collect.commission,
+			id: collect.id,
+			reminder: collect.reminder,
+			total: collect.total,
+			placeId: placeId
+		})
 	}
 
 	return (
@@ -218,7 +187,7 @@ export const CollectReportScreen = ({ navigation }) => {
 							</View>
 						</View>
 						<View style={styles.container}>
-							<CollectsTable data={collectData} />
+							<CollectsTable data={collectData} editCollect={editCollect} />
 						</View>
 					</View>
 				</ScrollView>

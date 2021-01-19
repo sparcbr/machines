@@ -9,7 +9,7 @@ import {
 	TableWrapper
 } from 'react-native-table-component'
 
-export const CollectsTable = ({ data, selected, onSaveSelected }) => {
+export const CollectsTable = ({ data, editCollect }) => {
 	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
@@ -42,7 +42,7 @@ export const CollectsTable = ({ data, selected, onSaveSelected }) => {
 
 	let cellWidth = 56
 
-	const onSelect = (id, val) => {
+	/*const onSelect = (id, val) => {
 		let indices = selected
 		const index = indices.indexOf(id)
 		console.debug('collectslist save id', id, 'val', val)
@@ -59,7 +59,7 @@ export const CollectsTable = ({ data, selected, onSaveSelected }) => {
 		}
 		console.debug('placeslist save indices', indices)
 		onSaveSelected(indices)
-	}
+	}*/
 
 	const [tableTitle, setTableTitle] = useState([])
 	useEffect(() => {
@@ -77,10 +77,15 @@ export const CollectsTable = ({ data, selected, onSaveSelected }) => {
 		setTableTitle(titles)
 	}, [data])
 
-	function onPressHandler(index, evt) {
-		console.log('Index:',index,'Event:', evt.nativeEvent)
-		// console.log(`x coord = ${evt.nativeEvent.locationX}`)
-		// console.log(`y coord = ${evt.nativeEvent.locationY}`)
+	function placeIdByIndex(yIndex) {
+		return data.placesIds[yIndex]
+	}
+	function onPressHandler(yIndex, evt) {
+		if (yIndex >= data.placesColumn.length - 1) return
+		let xIndex = ((evt.nativeEvent.pageX - 120) / 56) | 0
+		console.log('Index:', yIndex, 'xIndex', xIndex, 'mrange length', data.monthRange.length, 'Event:', evt.nativeEvent)
+		if (xIndex >= data.monthRange.length) return
+		editCollect(placeIdByIndex(yIndex), xIndex)
 	}
 
 	if (!data || !data.values) return <Text>No collect data.</Text>
@@ -131,24 +136,24 @@ export const CollectsTable = ({ data, selected, onSaveSelected }) => {
 						data.values.map((rowData, index) => {
 							return (<Fragment key={index}>
 								<TouchableOpacity onPress={evt => onPressHandler(index, evt)}>
-								<Row key={`rowt_${index}}`}
-									data={rowData.totals}
-									widthArr={new Array(data.monthNames.length).fill(cellWidth)}
-									style={styles.rowTotal}
-									textStyle={styles.textTotal}
-								/>
-								<Row key={`rowc_${index}}`}
-									data={rowData.commissions}
-									widthArr={new Array(data.monthNames.length).fill(cellWidth)}
-									style={styles.rowCommission}
-									textStyle={styles.textCommission}
-								/>
-								<Row key={`rowl_${index}}`}
-									data={rowData.liqs}
-									widthArr={new Array(data.monthNames.length).fill(cellWidth)}
-									style={styles.rowLiq}
-									textStyle={styles.textLiq}
-								/>
+									<Row key={`rowt_${index}}`}
+										data={rowData.totals}
+										widthArr={new Array(data.monthNames.length).fill(cellWidth)}
+										style={styles.rowTotal}
+										textStyle={styles.textTotal}
+									/>
+									<Row key={`rowc_${index}}`}
+										data={rowData.commissions}
+										widthArr={new Array(data.monthNames.length).fill(cellWidth)}
+										style={styles.rowCommission}
+										textStyle={styles.textCommission}
+									/>
+									<Row key={`rowl_${index}}`}
+										data={rowData.liqs}
+										widthArr={new Array(data.monthNames.length).fill(cellWidth)}
+										style={styles.rowLiq}
+										textStyle={styles.textLiq}
+									/>
 								</TouchableOpacity>
 							</Fragment>)
 						})

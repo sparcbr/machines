@@ -17,7 +17,8 @@ import { styles } from '../assets/styles/Globals'
 import { DatasetService } from '../services/dataset'
 import { PlacesList } from './PlacesList'
 
-export const CollectsScreen = ({ navigation }) => {
+export const CollectsScreen = ({ route, navigation }) => {
+	const [collectId, setCollectId] = useState(null)
 	const datasetService = DatasetService.getInstance()
 	const [searchName, setSearchName] = useState('')
 	const [searchAddress, setSearchAddress] = useState('')
@@ -31,6 +32,15 @@ export const CollectsScreen = ({ navigation }) => {
 		const currentDate = selectedDate || date
 		setShowDatePicker(false)
 		if (DateUtil.isValidDate(currentDate)) {
+			if (selected.length) {
+				let collect = datasetService.findCollectByMonth(selected[0], currentDate)
+				if (collect) {
+					setCollectId(collect.id)
+					setCommission(collect.commission)
+					setTotal(collect.total)
+					setReminder(collect.reminder)
+				}
+			}
 			setDateStr(DateUtil.formatDate(currentDate))
 			searchNameRef && searchNameRef.focus()
 		}
@@ -146,16 +156,54 @@ export const CollectsScreen = ({ navigation }) => {
 	React.useEffect(() => {
 		const unsubscribe = navigation.addListener('focus', () => {
 			// The screen is focused
-			refreshData()
+
 		})
 
 		// Return the function to unsubscribe from the event so it gets removed on unmount
 		return unsubscribe
 	}, [navigation])
 
+	useEffect(() => {
+		if (!route.params) return
+		console.debug('route.param', route.param)
+		if ((
+			route.params.id !== collectId || !selected.length || route.params.placeId !== selected[0]
+		)) {
+			const d = new Date(route.params.date)
+			if (DateUtil.isValidDate(d)) {
+				setCollectId(route.params.id)
+				setDateStr(DateUtil.formatDate(d))
+				setDate(d)
+				setCommission(route.params.commission)
+				setTotal(route.params.total)
+				setReminder(route.params.reminder)
+				setSelected([route.params.placeId])
+			} else {
+				//setCollectId(null)
+			}
+		} else {
+			//setCollectId(null)
+		}
+		//refreshData()
+	})
+
+	function clearForm() {
+		setCollectId(null)
+		setDateStr(DateUtil.formatDate(new Date()))
+		setDate(new Date())
+		setCommission(0.0)
+		setTotal(0.0)
+		setReminder('')
+		setSelected([])
+		console.debug('clearing Form')
+
+		//refreshData()
+	}
 	console.debug('PlaceScreen data =', data, 'selected', selected)
+
 	return (
 		<>
+
 			<SafeAreaView>
 				<StatusBar barStyle="dark-content" />
 				<ScrollView
@@ -353,10 +401,29 @@ export const CollectsScreen = ({ navigation }) => {
 								style={styles.input}
 							/>
 							<Button
-								title="Adicionar coleta"
+								title={collectId ? "Salvar coleta " + collectId : "Adicionar coleta"}
 								onPress={() => {
 									if (!selected.length) return
-									if (
+									if (collectId) {
+										if (
+											datasetService.editCollect(
+												selected[0],
+												collectId,
+												date,
+												total,
+												commission,
+												reminder
+											)
+										) {
+											Toast.showWithGravity(
+												'Coleta atualizada.',
+												Toast.LONG,
+												Toast.TOP
+											)
+											clearForm()
+										}
+									}
+									else if (
 										datasetService.addCollect(
 											selected[0],
 											date,

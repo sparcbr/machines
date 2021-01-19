@@ -4,8 +4,8 @@ import { Cell, Row, Table, TableWrapper } from 'react-native-table-component'
 import { mainStyles } from '../assets/styles/Globals'
 import { DateUtil } from '../shared/date'
 
-export const PlacesList = ({data, selected, onSaveSelected, isHomeScreen = false, isCollectsScreen = false}) => {
- 	const styles = StyleSheet.create({
+export const PlacesList = ({ data, selected, onSaveSelected, isHomeScreen = false, isCollectsScreen = false }) => {
+	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
 			padding: 16,
@@ -28,19 +28,21 @@ export const PlacesList = ({data, selected, onSaveSelected, isHomeScreen = false
 		if (val) { // add
 			console.debug('placeslist save indices index', index)
 			if (index < 0) {
-				
-				if (isCollectsScreen) indices = []
+
+				if (isCollectsScreen) {
+					// select only one at a time
+					// deselect the other items
+					indices = []
+				}
 				indices.push(id)
 			}
-			
-
 		} else { // remove
 			index >= 0 && indices.splice(index, 1)
 		}
 		console.debug('placeslist save indices', indices)
 		onSaveSelected(indices)
 	}
- 
+
 	// if (!placesList || !placesList.length) {
 	if (!data || !data.length) {
 		return <Text>No places found.</Text>
@@ -72,16 +74,16 @@ export const PlacesList = ({data, selected, onSaveSelected, isHomeScreen = false
 							data={isHomeScreen ? rowData.last : DateUtil.formatDate(rowData.lastCollect)}
 							textStyle={styles.text}
 						/>
-						{isHomeScreen ? 
-						<Cell
-							key={`${index}_4`}
-							data={rowData.reminder}
-							textStyle={styles.text}
-						/>: <Cell
-							key={`${index}_4`}
-							data={rowData.reminder}
-							textStyle={styles.text}
-						/> }
+						{isHomeScreen ?
+							<Cell
+								key={`${index}_4`}
+								data={rowData.reminder}
+								textStyle={styles.text}
+							/> : <Cell
+								key={`${index}_4`}
+								data={rowData.reminder}
+								textStyle={styles.text}
+							/>}
 
 						<Cell
 							key={`${index}_5`}

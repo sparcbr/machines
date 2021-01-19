@@ -96,7 +96,6 @@ export class DatasetService {
 		}
 		// return this.getRemoteInfo(params, settings)
 		for (let index = 0; index < this.data.length; index++) {
-			console.debug('collectzz', this.data[index]['lastCollect'])
 			this.data[index]['last'] = this.data[index]['lastCollect'] !== 0 && DateUtil.isValidDate(this.data[index]['lastCollect'])
 				? Math.floor(DateUtil.diffInDays(Date.now, this.data[index]['lastCollect']))
 				: 1000
@@ -136,6 +135,9 @@ export class DatasetService {
 			lastCollect: 0,
 			collects: []
 		})
+		this.places = this.places.sort((a, b) =>
+			a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+		)
 		console.debug('place added: name=', name, 'address=', address)
 		AsyncStorage.setItem('places', JSON.stringify(this.places))
 
@@ -146,8 +148,8 @@ export class DatasetService {
 	/* fetch(params) {
 		RequestUtil.get('/places', params)
 	} */
-	addCollect(localId, date, total, commission, reminder) {
-		const placeIndex = this.places.findIndex(e => e.id === localId)
+	addCollect(placeId, date, total, commission, reminder) {
+		const placeIndex = this.places.findIndex(e => e.id === placeId)
 		if (placeIndex < 0) return false
 		console.debug('addCollect', typeof date, date)
 
@@ -166,7 +168,7 @@ export class DatasetService {
 		}
 		console.debug(
 			'collected: local=',
-			localId,
+			placeId,
 			'date=',
 			date,
 			'total=',
@@ -185,6 +187,50 @@ export class DatasetService {
 		return true
 	}
 
+	findCollectByMonth(placeId, date) {
+		const placeIndex = this.places.findIndex(e => e.id === placeId)
+		if (placeIndex < 0) return false
+
+		let begin = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0)
+		let end = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0)
+
+		return this.places[placeIndex].collects.find(c => begin <= c.date && c.date < end)
+	}
+
+	editCollect(placeId, collectId, date, total, commission, reminder) {
+		const placeIndex = this.places.findIndex(e => e.id === placeId)
+		if (placeIndex < 0) return false
+
+		this.places[placeIndex].collects[collectId] = {
+			id: collectId,
+			date: new Date(date),
+			total: total,
+			commission: commission,
+			reminder: reminder
+		}
+		if (date > this.places[placeIndex].lastCollect) {
+			this.places[placeIndex].lastCollect = new Date(date)
+		}
+		console.debug(
+			'collected: local=',
+			placeId,
+			'date=',
+			date,
+			'total=',
+			total,
+			'commission=',
+			commission,
+			'reminder=',
+			reminder
+		)
+		AsyncStorage.setItem('places', JSON.stringify(this.places))
+		// AsyncStorage.setItem('collects', JSON.stringify(this.collects))
+
+		this.updateHomeData()
+		//this.updateCollectData()
+
+		return true
+	}
 	getCollectData(_beginDate, _endDate = '2100-01-01') {
 		let beginDate
 		if (!DateUtil.isValidDate(_beginDate)) {
@@ -265,32 +311,30 @@ export class DatasetService {
 		let monthRange = DateUtil.createMonthRange(this.beginDate, this.endDate)
 		this.collectData = {
 			placesColumn: [],
+			placesIds: [],
 			monthNames: monthRange.map(e => e.label),
+			monthRange: monthRange,
 			values: []
 		}
 		this.collectData.monthNames.push('Totais')
 
-		this.orderedPlaces = this.places.sort((a, b) =>
+		/*this.orderedPlaces = this.places.sort((a, b) =>
 			a.name < b.name ? -1 : a.name > b.name ? 1 : 0
-		)
+		)*/
 
-		console.debug('this.placesoo', this.orderedPlaces)
+		console.debug('this.placesoo', this.places)
 		//.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
 		let monthTotals = {
 			totals: new Array(monthRange.length + 1).fill(0.0),
 			commissions: new Array(monthRange.length + 1).fill(0.0),
 			liqs: new Array(monthRange.length + 1).fill(0.0)
 		}
-		this.orderedPlaces.forEach(place => {
+		this.places.forEach(place => {
 			this.collectData.placesColumn.push(place.name)
+			this.collectData.placesIds.push(place.id)
 			let filteredCollects = place.collects.filter(
-				c => {
-					// console.debug('filtering collect c=', c, 'with c.date between', this.beginDate, this.endDate)
-					// console.debug('type c.date', typeof c.date)
-					return c.date >= this.beginDate && c.date <= this.endDate
-				}
+				c => c.date >= this.beginDate && c.date < this.endDate
 			)
-			// console.debug('orderedPlace', place, 'filteredCollects=', this.beginDate, this.endDate, JSON.stringify(filteredCollects, null, 4))
 
 			let placeTotal = 0.0, // sum total in all months for a given place
 				placeCommission = 0.0, // same as above for commision
@@ -303,7 +347,7 @@ export class DatasetService {
 				// each month, pick values from corresponding date interval and sum those values,
 				// push the calculated totals to the result array
 				filteredCollects.forEach(c => {
-					if (c.date >= m.begin && c.date <= m.end) {
+					if (c.date >= m.begin && c.date < m.end) {
 						total += c.total
 						commission += c.commission
 						liq += c.total - c.commission
@@ -337,5 +381,31 @@ export class DatasetService {
 		this.collectData.placesColumn.push('Totals')
 		this.collectData.values.push(monthTotals)
 		// console.debug('here3', this.collectData.values)
+	}
+
+	/**
+	 * 
+	 * Finds collects in the given monthRange in the month specified by monthIndex
+	 * returns index of collect in this.place.collects
+	 */
+	findCollectIndex(placeId, monthIndex, monthRange) {
+		const placeIndex = this.places.findIndex(e => e.id === placeId)
+		if (placeIndex < 0) return false
+		let collectIndex = this.places[placeIndex].collects.findIndex(
+			c => c.date >= monthRange[monthIndex].begin && c.date < monthRange[monthIndex].end
+		)
+
+		return { placeIndex: placeIndex, collectIndex: collectIndex }
+	}
+
+	getCollectByIndex(placeIndex, collectIndex) {
+		return this.places[placeIndex].collects[collectIndex]
+	}
+
+	findCollect(placeId, monthIndex, monthRange) {
+		console.debug('placeid', placeId, 'monthindex', monthIndex)
+		let { placeIndex, collectIndex } = this.findCollectIndex(placeId, monthIndex, monthRange)
+		console.debug('collectindex:', collectIndex)
+		return this.getCollectByIndex(placeIndex, collectIndex)
 	}
 }
